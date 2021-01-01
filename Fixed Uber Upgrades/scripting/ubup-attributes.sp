@@ -53,6 +53,7 @@ public OnPluginStart()
 			}
 		}
 	}
+	CreateTimer(0.1, Timer_GiveHealth, _, TIMER_REPEAT);
 	Handle hGameConf = LoadGameConfigFile("tf2.fixeduu");
 	if (!hGameConf) {
 		SetFailState("Failed to load gamedata for ubup-attributes.");
@@ -112,6 +113,39 @@ public OnClientDisconnect(client)
 			b_Hooked[client] = false;
 			SDKUnhook(client, SDKHook_OnTakeDamage, OnTakeDamage);
 			SDKUnhook(client, SDKHook_TraceAttack, TraceAttack);
+		}
+	}
+}
+public Action:Timer_GiveHealth(Handle:timer)//give health every 0.1 seconds
+{
+	for(new client = 1; client < MaxClients; client++)
+	{
+		if (IsValidClient(client))
+		{
+			new Address:RegenActive = TF2Attrib_GetByName(client, "disguise on backstab");
+			if(RegenActive != Address_Null)
+			{
+				new Float:RegenPerSecond = TF2Attrib_GetValue(RegenActive);
+				new Float:RegenPerTick = RegenPerSecond/10;
+				new Address:HealingReductionActive = TF2Attrib_GetByName(client, "health from healers reduced");
+				if(HealingReductionActive != Address_Null)
+				{
+					RegenPerTick *= TF2Attrib_GetValue(HealingReductionActive);
+				}
+				new clientHealth = GetEntProp(client, Prop_Data, "m_iHealth");
+				new clientMaxHealth = TF2_GetMaxHealth(client);
+				if(clientHealth < clientMaxHealth)
+				{
+					if(float(clientHealth) + RegenPerTick < clientMaxHealth)
+					{
+						SetEntProp(client, Prop_Data, "m_iHealth", clientHealth+RoundToNearest(RegenPerTick));
+					}
+					else
+					{
+						SetEntProp(client, Prop_Data, "m_iHealth", clientMaxHealth);
+					}
+				}
+			}
 		}
 	}
 }
@@ -497,4 +531,9 @@ delay(ref)
 			}
 		}
     } 
+}
+stock TF2_GetMaxHealth(iClient)
+{
+    new maxhealth = GetEntProp(GetPlayerResourceEntity(), Prop_Send, "m_iMaxHealth", _, iClient);
+    return ((maxhealth == -1 || maxhealth == 80896) ? GetEntProp(iClient, Prop_Data, "m_iMaxHealth") : maxhealth);
 }
