@@ -3,8 +3,6 @@ This is a public modification of Uberupgrades. I mainly feel this is needed due 
 
 If you want to run it, add "sm plugins reload tf2attributes_ubup" to server.cfg so your uberupgrades will actually load every time your server restarts or map changes.
 
-discord.gg/FPxywaa <- My community discord server. You can message or ping me if you need help.
-
 # Prerequisites
 You'll need these plugins:
 TF2Attributes (https://github.com/FlaminSarge/tf2attributes/releases)
@@ -29,3 +27,5 @@ FlaminSarge - TF2Attributes
 Mr L / lobnico - Original Uberupgrades Configs & Code.
 
 nosoop - reused some of their code.
+
+Don't bother me for help. I've quit working on things that aren't worth my time.
